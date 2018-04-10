@@ -1,0 +1,155 @@
+\documentclass[12pt]{jsarticle}
+\usepackage[dvipdfmx]{graphicx}
+\textheight = 25truecm
+\textwidth = 18truecm
+\topmargin = -1.5truecm
+\oddsidemargin = -1truecm
+\evensidemargin = -1truecm
+\marginparwidth = -1truecm
+
+\def\theenumii{\Alph{enumii}}
+\def\theenumiii{\alph{enumiii}}
+\def\labelenumi{(\theenumi)}
+\def\labelenumiii{(\theenumiii)}
+\def\theenumiv{\roman{enumiv}}
+\def\labelenumiv{(\theenumiv)}
+\usepackage{comment}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% sty/ にある研究室独自のスタイルファイル
+\usepackage{jtygm}  % フォントに関する余計な警告を消す
+\usepackage{nutils} % insertfigure, figref, tabref マクロ
+
+\def\figdir{./figs} % 図のディレクトリ
+\def\figext{pdf}    % 図のファイルの拡張子
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 表題
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+{\LARGE 資料タイトル}
+\end{center}
+
+\begin{flushright}
+  2018/4/10\\
+  吉田 修太郎
+\end{flushright}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 概要
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{はじめに}
+本手順書では，Linuxカーネルに対して新たにシステムコールを追加するための手順について述べる．以降では，実装環境，実装したシステムコールの概要，実装の手順，動作テストについて，順に章立ててそれぞれの詳細を述べる．
+
+\section{実装環境}
+本手順書における実装環境を下表に示す．
+\begin{table}[tb]
+  \begin{center}
+    \caption{実装環境}%\label{tab:time_range_ratio}
+    %\ecaption{Frequency of task ocurrences.}
+    \begin{tabular}{r|r}
+      \hline\hline
+      OS & Debian 7.11 \\
+      \hline
+      カーネル & Linux カーネル 3.15.0\\
+      \hline
+      CPU & Intel(R) Core(TM) i7-4770
+      \hline
+      メモリ & 
+      \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\section{実装するシステムコールの概要}
+ここでは，本手順書において実装するシステムコールの概要について述べる．
+\begin{description}
+\item[形式] asmlinkage int prt\_to\_rbuf(char *s)
+\item[引数] char *s: 出力する文字列のポインタ
+\item[戻り値] カーネルバッファに書き込んだ文字数
+  %\begin{description}
+  %\item[成功]:カーネルバッファに書き込んだ文字数
+  %\item[失敗]:-１
+  %\end{description}
+\item[機能] 受け取った文字列をカーネルバッファに書き込む
+  
+\end{description}
+\section{実装の手順}
+\subsection{概要}
+本章では，システムコール実装の手順について述べる．以降では，ソースコードの作成，プロトタイプ宣言，システムコール番号の定義，Makefileの編集およびカーネルの再構築についてそれぞれについて節を設けて詳細に述べる．
+\subsection{ソースコードの作成}
+
+\subsection{プロトタイプ宣言}
+ここでは，プロトタイプ宣言の手順について述べる．システムコール関数のプロトタイプ宣言が，まとめて書かれているヘッダファイルを探し，編集する．本手順書では，以下のファイルを編集する．
+\begin{itemize}
+\item \slash{}home\slash{}git\slash{}linux-stable\slash{}include\slash{}linux\slash{}syscalls.h
+\end{itemize}
+本手順書では，このヘッダファイルの末尾に以下の行を追加する．
+\begin{itemize}
+\item \slash{}home\slash{}git\slash{}asmlinkage int prt\_to\_rbuf(char *s);
+\end{itemize}
+\subsection{システムコール番号の定義}
+ここでは，システムコール番号を定義する手順について述べる．システムコール関数と，システムコール番号との対応づけが書かれているファイルを探し，編集する．本手順書では，以下のファイルを編集する．
+\begin{itemize}
+\item \slash{}home\slash{}git\slash{}linux-stable\slash{}arch\slash{}x86\slash{}syscalls\slash{}syscall\_64.tbl
+\end{itemize}
+このファイルの内容の一部を抜粋し，以下に示す．
+\begin{verbatim}
+\end{verbatim}
+上記のファイル内容の先頭付近に，このファイルのフォーマットは＜number＞＜abi＞＜name＞＜entry point＞であるという旨が記述されている．それぞれの要素についての簡単な説明を以下に示す．
+\begin{description}
+\item[number] システムコール番号
+\item[abi] Applicatioin Binary Interface
+\item[name] 関数名
+\item[entry point] 関数が 
+\end{description}
+このフォーマットに従い，実装したいシステムコールをこのファイルに追記する．ただし，システムコール番号は，システムコール呼出しの際に関数の特定に使用されるため，他の関数と重複してはならない．本資料では，以下のように設定する．
+\begin{description}
+\item[number] 317
+\item[abi] common
+\item[name] sys\_prt\_to\_rbuf
+\item[entry point] sys\_prt\_to\_rbuf 
+\end{description}
+上記の場合におけるファイルへの記入例を以下に示す．
+\begin{verbatim}
+\end{verbatim}
+\subsection{Makefile編集}
+ここでは，Makefileの編集について述べる．今回編集するMakefileを以下に示す．
+\begin{itemize}
+\item \slash{}home\slash{}git\slash{}linux-stable\slash{}kernel\slash{}Makefile
+\end{itemize}
+makeコマンドは，このファイルの内容に基づいて実行されるため，今回追加したシステムコール関数をコンパイルするためには，ここにその処理を追記する必要がある．具体的には，各システムコール関数のオブジェクトファイルが代入されるobj-yという変数に対して，新たに作成したシステムコールのオブジェクトファイルも代入されるように追記する．本手順書における，このMakefileの編集内容を以下に示す．
+
+\begin{verbatim}
+変更前
+\end{verbatim}
+
+\begin{verbatim}
+変更後
+\end{verbatim}
+\subsection{カーネルの再構築}
+
+\section{動作テスト}
+\subsection{概要}
+本章では，実装したシステムコールの動作テストについて述べる．
+\subsection{動作テスト用プログラムの準備}
+prt\_to\_rbufの動作テストに用いるプログラムを作成する．本手順書における動作テスト用プログラムを以下に示す．
+\subsection{動作テストの手順}
+動作テストの手順を以下に示す．
+\begin{enumerate}
+\item 動作テスト用プログラムの実行
+\item dmesgコマンドの実行
+\end{enumerate}
+\subsection{参考文献の挿入例}
+参考文献を記載する際はbibtexを利用する．
+mybibdate.bibに参考文献の情報を記載する．
+たとえば，乃村先生の論文\cite{nom2011c}を参考文献として記載する．
+
+\section{おわりに}
+
+本資料では
+
+\bibliographystyle{ipsjunsrt}
+\bibliography{mybibdata}
+
+\end{document}
