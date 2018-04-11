@@ -1,4 +1,4 @@
-This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2015/dev/Debian) (preloaded format=platex 2018.4.2)  10 APR 2018 06:44
+This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2015/dev/Debian) (preloaded format=platex 2018.4.2)  11 APR 2018 10:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -73,26 +73,7 @@ Excluding comment 'comment') (sty/jtygm.sty
 Package: jtygm 1998/06/12 based on v1.3 KANJI font defines
 ) (sty/nutils.sty
 Package: nutils 2014/11/22 v1.0 by Yoshinari Nomura
-) (./sys_proc.aux
-
-LaTeX Warning: Label `sec:hoge' multiply defined.
-
-
-LaTeX Warning: Label `sec:hoge' multiply defined.
-
-
-LaTeX Warning: Label `subsec:hoge' multiply defined.
-
-
-LaTeX Warning: Label `subsec:hoge' multiply defined.
-
-
-LaTeX Warning: Label `subsec:hoge' multiply defined.
-
-
-LaTeX Warning: Label `sec:hoge' multiply defined.
-
-)
+) (./sys_proc.aux)
 \openout1 = `sys_proc.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
@@ -124,57 +105,50 @@ LaTeX Font Info:    Font shape `JT1/gt/m/n' will be
 LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
 (Font)              scaled to size 13.83836pt on input line 41.
 LaTeX Font Info:    Font shape `JT1/mc/m/n' will be
-(Font)              scaled to size 8.64899pt on input line 49.
+(Font)              scaled to size 8.64899pt on input line 48.
 LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
-(Font)              scaled to size 8.64899pt on input line 49.
+(Font)              scaled to size 8.64899pt on input line 48.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 51.
+(Font)              <7> on input line 50.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 51.
+(Font)              <5> on input line 50.
 LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
-(Font)              scaled to size 6.72699pt on input line 51.
+(Font)              scaled to size 6.72699pt on input line 50.
 LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
-(Font)              scaled to size 4.805pt on input line 51.
+(Font)              scaled to size 4.805pt on input line 50.
 LaTeX Font Info:    Font shape `JT1/gt/m/n' will be
-(Font)              scaled to size 9.60999pt on input line 63.
+(Font)              scaled to size 9.60999pt on input line 67.
 LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
-(Font)              scaled to size 9.60999pt on input line 63.
+(Font)              scaled to size 9.60999pt on input line 67.
 LaTeX Font Info:    Font shape `JT1/mc/m/n' will be
-(Font)              scaled to size 11.53198pt on input line 72.
+(Font)              scaled to size 11.53198pt on input line 78.
 LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
-(Font)              scaled to size 11.53198pt on input line 72.
+(Font)              scaled to size 11.53198pt on input line 78.
 LaTeX Font Info:    Font shape `JT1/gt/m/n' will be
-(Font)              scaled to size 11.53198pt on input line 72.
+(Font)              scaled to size 11.53198pt on input line 78.
 LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
-(Font)              scaled to size 11.53198pt on input line 72.
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 76.
+(Font)              scaled to size 11.53198pt on input line 78.
+
+[1
+
+]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 96.
  (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 76.
- [1
-
-] [2]
-
-LaTeX Warning: Citation `nom2011c' on page 3 undefined on input line 137.
-
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 96.
+ [2] [3] [4]
+[5]
 No file sys_proc.bbl.
-[3] (./sys_proc.aux)
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: There were multiply-defined labels.
-
- ) 
+[6] (./sys_proc.aux) ) 
 Here is how much of TeX's memory you used:
- 852 strings out of 494934
- 10021 string characters out of 6180150
+ 843 strings out of 494934
+ 9905 string characters out of 6180150
  65642 words of memory out of 5000000
- 4243 multiletter control sequences out of 15000+600000
- 13120 words of font info for 61 fonts, out of 8000000 for 9000
+ 4235 multiletter control sequences out of 15000+600000
+ 12812 words of font info for 60 fonts, out of 8000000 for 9000
  269 hyphenation exceptions out of 8191
- 25i,8n,22p,390b,330s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 25i,8n,21p,521b,330s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on sys_proc.dvi (3 pages, 7024 bytes).
+Output written on sys_proc.dvi (6 pages, 12128 bytes).

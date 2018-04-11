@@ -39,11 +39,11 @@
 %% 概要
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{はじめに}
-本手順書では，Linuxカーネルに対して新たにシステムコールを追加するための手順について述べる．以降では，実装環境，実装したシステムコールの概要，実装の手順，動作テストについて，順に章立ててそれぞれの詳細を述べる．
+本手順書では，Linuxカーネルに対して新たにシステムコールを追加するための手順について述べる．本手順書において実装するのは，任意の文字列をカーネルバッファに書き込む機能を持つシステムコールである．以降では，実装環境，実装したシステムコールの概要，実装の手順，動作テストについて，順に章立ててそれぞれの詳細を述べる．
 
 \section{実装環境}
 本手順書における実装環境を下表に示す．
-\begin{table}[tb]
+\begin{table}[h!]
   \begin{center}
     \caption{実装環境}%\label{tab:time_range_ratio}
     %\ecaption{Frequency of task ocurrences.}
@@ -51,11 +51,11 @@
       \hline\hline
       OS & Debian 7.11 \\
       \hline
-      カーネル & Linux カーネル 3.15.0\\
+      カーネル & Linux カーネル 3.15.0 \\
       \hline
-      CPU & Intel(R) Core(TM) i7-4770
+      CPU & Intel(R) Core(TM) i7-4770 \\
       \hline
-      メモリ & 
+      メモリ & 16GB\\
       \hline
     \end{tabular}
   \end{center}
@@ -64,21 +64,32 @@
 \section{実装するシステムコールの概要}
 ここでは，本手順書において実装するシステムコールの概要について述べる．
 \begin{description}
-\item[形式] asmlinkage int prt\_to\_rbuf(char *s)
+\item[形式] asmlinkage int sys\_prt\_to\_rbuf(char *s)
 \item[引数] char *s: 出力する文字列のポインタ
 \item[戻り値] カーネルバッファに書き込んだ文字数
   %\begin{description}
   %\item[成功]:カーネルバッファに書き込んだ文字数
   %\item[失敗]:-１
   %\end{description}
-\item[機能] 受け取った文字列をカーネルバッファに書き込む
+\item[機能] 引数として受け取った文字列をカーネルバッファに書き込む
   
 \end{description}
 \section{実装の手順}
 \subsection{概要}
 本章では，システムコール実装の手順について述べる．以降では，ソースコードの作成，プロトタイプ宣言，システムコール番号の定義，Makefileの編集およびカーネルの再構築についてそれぞれについて節を設けて詳細に述べる．
 \subsection{ソースコードの作成}
+ここでは，実装するシステムコールのソースコードの作成について述べる．具体的な記述例として，本手順書3章において示したシステムコールの，ソースコードを以下に示す．なお，このソースコードはC言語で記述されている．
+\begin{verbatim}
+#include <linux/kernel.h>
+#include <linux/syscalls.h>
 
+asmlinkage int sys_prt_to_rbuf(char *s){
+  int ret;
+  ret = printk(KERN_INFO "%s\n",s);
+  printk("%d charactor(s) outputed\n",ret);
+  return ret;
+}
+\end{verbatim}
 \subsection{プロトタイプ宣言}
 ここでは，プロトタイプ宣言の手順について述べる．システムコール関数のプロトタイプ宣言が，まとめて書かれているヘッダファイルを探し，編集する．本手順書では，以下のファイルを編集する．
 \begin{itemize}
@@ -95,6 +106,35 @@
 \end{itemize}
 このファイルの内容の一部を抜粋し，以下に示す．
 \begin{verbatim}
+#
+# 64-bit system call numbers and entry vectors
+#
+# The format is:
+# <number> <abi> <name> <entry point>
+#
+# The abi is "common", "64" or "x32" for this file.
+#
+0	common	read			sys_read
+1	common	write			sys_write
+2	common	open			sys_open
+3	common	close			sys_close
+               ~ (中略) ~
+314	common	sched_setattr		sys_sched_setattr
+315	common	sched_getattr		sys_sched_getattr
+316	common	renameat2		sys_renameat2
+
+#
+# x32-specific system call numbers start at 512 to avoid cache impact
+# for native 64-bit operation.
+#
+512	x32	rt_sigaction		compat_sys_rt_sigaction
+513	x32	rt_sigreturn		stub_x32_rt_sigreturn
+514	x32	ioctl			compat_sys_ioctl
+               ~ (中略) ~
+540	x32	process_vm_writev	compat_sys_process_vm_writev
+541	x32	setsockopt		compat_sys_setsockopt
+542	x32	getsockopt		compat_sys_getsockopt
+(EOF)
 \end{verbatim}
 上記のファイル内容の先頭付近に，このファイルのフォーマットは＜number＞＜abi＞＜name＞＜entry point＞であるという旨が記述されている．それぞれの要素についての簡単な説明を以下に示す．
 \begin{description}
@@ -110,40 +150,74 @@
 \item[name] sys\_prt\_to\_rbuf
 \item[entry point] sys\_prt\_to\_rbuf 
 \end{description}
-上記の場合におけるファイルへの記入例を以下に示す．
+上記の場合におけるファイルへの記入例(変更した部位とその前後数行のみ抜粋)を以下に示す．先頭に+を置いて示した行が，追加された行である．
 \begin{verbatim}
+ 314	common	sched_setattr		sys_sched_setattr
+ 315	common	sched_getattr		sys_sched_getattr
+ 316	common	renameat2		sys_renameat2
++317     commoc  sys_prt_to_rbuf         sys_prt_to_rbuf
+
+#
+# x32-specific system call numbers start at 512 to avoid cache impact
+# for native 64-bit operation.
+#
 \end{verbatim}
 \subsection{Makefile編集}
 ここでは，Makefileの編集について述べる．今回編集するMakefileを以下に示す．
 \begin{itemize}
 \item \slash{}home\slash{}git\slash{}linux-stable\slash{}kernel\slash{}Makefile
 \end{itemize}
-makeコマンドは，このファイルの内容に基づいて実行されるため，今回追加したシステムコール関数をコンパイルするためには，ここにその処理を追記する必要がある．具体的には，各システムコール関数のオブジェクトファイルが代入されるobj-yという変数に対して，新たに作成したシステムコールのオブジェクトファイルも代入されるように追記する．本手順書における，このMakefileの編集内容を以下に示す．
+makeコマンドは，このファイルの内容に基づいて実行されるため，今回追加したシステムコール関数をコンパイルするためには，ここにその処理を追記する必要がある．具体的には，Makefileの先頭付近に記述されている，各システムコール関数のオブジェクトファイルが代入されるobj-yという変数に対して，新たに作成したシステムコールのオブジェクトファイルも代入されるように追記する．本手順書における，このMakefileの編集内容(編集した部分のみ抜粋)を以下に示す．なお，ここでは削除した行の先頭に-を，追加した行の先頭に＋を挿入している．
 
 \begin{verbatim}
-変更前
+　#
+　# Makefile for the linux kernel
+　#
+　
+ obj-y     = fork.o exec_domain.o panic.o \
+             cpu.o exit.o itimer.o time.o softirq.o resource.o \
+             sysctl.o sysctl_binary.o capability.o ptrace.o timer.o user.o \
+             signal.o sys.o kmod.o workqueue.o pid.o task_work.o \
+             extable.o params.o posix-timers.o \
+             kthread.o sys_ni.o posix-cpu-timers.o \
+             hrtimer.o nsproxy.o \
+             notifier.o ksysfs.o cred.o reboot.o \
+-            async.o range.o groups.o smpboot.o
++            async.o range.o groups.o smpboot.o　prt_to_rbuf.o
 \end{verbatim}
 
-\begin{verbatim}
-変更後
-\end{verbatim}
 \subsection{カーネルの再構築}
-
+\subsubsection{.configファイルの作成}
+カーネルを再構築するにあたり，はじめに，.configファイルを作成する．これは，カーネルの設定ファイルである．
+\subsubsection{カーネルのコンパイル}
+\subsubsection{カーネルのインストール}
+\subsubsection{カーネルモジュールのコンパイル}
+\subsubsection{カーネルモジュールのインストール}
 \section{動作テスト}
 \subsection{概要}
-本章では，実装したシステムコールの動作テストについて述べる．
+本章では，実装したシステムコールの動作テストについて述べる．以降では，動作テスト用プログラムの準備と，動作テストの手順について，順に節を設け述べる．
 \subsection{動作テスト用プログラムの準備}
 prt\_to\_rbufの動作テストに用いるプログラムを作成する．本手順書における動作テスト用プログラムを以下に示す．
+\begin{verbatim}
+#include<stdio.h>
+#include<unistd.h>
+
+int main(){
+  char buf[128];
+  long sys_num = 317;
+  int ret;
+  scanf("%[^\r\n]",buf);
+  ret = syscall(sys_num,buf);
+  printf("ret:%d\n",ret);
+  return 0;
+}
+\end{verbatim}
 \subsection{動作テストの手順}
 動作テストの手順を以下に示す．
 \begin{enumerate}
 \item 動作テスト用プログラムの実行
 \item dmesgコマンドの実行
 \end{enumerate}
-\subsection{参考文献の挿入例}
-参考文献を記載する際はbibtexを利用する．
-mybibdate.bibに参考文献の情報を記載する．
-たとえば，乃村先生の論文\cite{nom2011c}を参考文献として記載する．
 
 \section{おわりに}
 
