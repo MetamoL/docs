@@ -28,21 +28,21 @@
 %% 表題
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{center}
-{\LARGE 資料タイトル}
+{\LARGE Linuxカーネルに対するシステムコール追加のための手順}
 \end{center}
 
 \begin{flushright}
-  2018/4/10\\
+  2018/4/13\\
   吉田 修太郎
 \end{flushright}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 概要
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{はじめに}
-本手順書では，Linuxカーネルに対して新たにシステムコールを追加するための手順について述べる．本手順書において実装するのは，任意の文字列をカーネルバッファに書き込む機能を持つシステムコールである．以降では，実装環境，実装したシステムコールの概要，実装の手順，動作テストについて，順に章立ててそれぞれの詳細を述べる．
+本手順書では，Linuxカーネルに対して新たにシステムコールを追加するための手順について述べる．本手順書において追加するのは，任意の文字列をカーネルバッファに書き込む機能を持つシステムコールである．なお，本手順書はコンソールの基本操作を習得している者に向けてかかれており，本手順書において示される一連の操作の中で，必要となるあらゆるパッケージは，すでにインストールされているものとする．以降では，追加したシステムコールの実装環境，追加したシステムコールの概要，追加の手順，動作テストについて，順に章立ててそれぞれの詳細を述べる．
 
-\section{実装環境}
-本手順書における実装環境を下表に示す．
+\section{追加するシステムコールの実装環境}
+本手順書において追加したシステムコールの，実装環境を下表に示す．
 \begin{table}[h!]
   \begin{center}
     \caption{実装環境}%\label{tab:time_range_ratio}
@@ -61,8 +61,8 @@
   \end{center}
 \end{table}
 
-\section{実装するシステムコールの概要}
-ここでは，本手順書において実装するシステムコールの概要について述べる．
+\section{追加するシステムコールの概要}
+本章では，本手順書においてLinuxカーネルに追加するシステムコールの概要について述べる．
 \begin{description}
 \item[形式] asmlinkage int sys\_prt\_to\_rbuf(char *s)
 \item[引数] char *s: 出力する文字列のポインタ
@@ -74,11 +74,11 @@
 \item[機能] 引数として受け取った文字列をカーネルバッファに書き込む
   
 \end{description}
-\section{実装の手順}
+\section{追加の手順}
 \subsection{概要}
-本章では，システムコール実装の手順について述べる．以降では，ソースコードの作成，プロトタイプ宣言，システムコール番号の定義，Makefileの編集およびカーネルの再構築についてそれぞれについて節を設けて詳細に述べる．
+本章では，新たなシステムコールを追加する手順について述べる．以降では，ソースコードの作成，プロトタイプ宣言，システムコール番号の定義，Makefileの編集およびカーネルの再構築についてそれぞれについて節を設けて詳細に述べる．
 \subsection{ソースコードの作成}
-ここでは，実装するシステムコールのソースコードの作成について述べる．具体的な記述例として，本手順書3章において示したシステムコールの，ソースコードを以下に示す．なお，このソースコードはC言語で記述されている．
+ここでは，追加するシステムコールのソースコードの作成について述べる．具体的な記述例として，本手順書3章において示したシステムコールの，ソースコードを以下に示す．なお，このソースコードはC言語で記述されている．
 \begin{verbatim}
 #include <linux/kernel.h>
 #include <linux/syscalls.h>
@@ -91,7 +91,7 @@ asmlinkage int sys_prt_to_rbuf(char *s){
 }
 \end{verbatim}
 \subsection{プロトタイプ宣言}
-ここでは，プロトタイプ宣言の手順について述べる．システムコール関数のプロトタイプ宣言が，まとめて書かれているヘッダファイルを探し，編集する．本手順書では，以下のファイルを編集する．
+本節では，プロトタイプ宣言の手順について述べる．システムコール関数のプロトタイプ宣言が，まとめて書かれているヘッダファイルを探し，編集する．本手順書では，以下のファイルを編集する．
 \begin{itemize}
 \item \slash{}home\slash{}git\slash{}linux-stable\slash{}include\slash{}linux\slash{}syscalls.h
 \end{itemize}
@@ -100,7 +100,7 @@ asmlinkage int sys_prt_to_rbuf(char *s){
 \item \slash{}home\slash{}git\slash{}asmlinkage int prt\_to\_rbuf(char *s);
 \end{itemize}
 \subsection{システムコール番号の定義}
-ここでは，システムコール番号を定義する手順について述べる．システムコール関数と，システムコール番号との対応づけが書かれているファイルを探し，編集する．本手順書では，以下のファイルを編集する．
+本節では，システムコール番号を定義する手順について述べる．システムコール関数と，システムコール番号との対応づけが書かれているファイルを探し，編集する．本手順書では，以下のファイルを編集する．
 \begin{itemize}
 \item \slash{}home\slash{}git\slash{}linux-stable\slash{}arch\slash{}x86\slash{}syscalls\slash{}syscall\_64.tbl
 \end{itemize}
@@ -141,9 +141,9 @@ asmlinkage int sys_prt_to_rbuf(char *s){
 \item[number] システムコール番号
 \item[abi] Applicatioin Binary Interface
 \item[name] 関数名
-\item[entry point] 関数が 
+\item[entry point] この関数のエントリポイント
 \end{description}
-このフォーマットに従い，実装したいシステムコールをこのファイルに追記する．ただし，システムコール番号は，システムコール呼出しの際に関数の特定に使用されるため，他の関数と重複してはならない．本資料では，以下のように設定する．
+このフォーマットに従い，追加したいシステムコールをこのファイルに追記する．ただし，システムコール番号は，システムコール呼出しの際に関数の特定に使用されるため，他の関数と重複してはならない．本手順書では，以下のように設定する．
 \begin{description}
 \item[number] 317
 \item[abi] common
@@ -170,10 +170,10 @@ asmlinkage int sys_prt_to_rbuf(char *s){
 makeコマンドは，このファイルの内容に基づいて実行されるため，今回追加したシステムコール関数をコンパイルするためには，ここにその処理を追記する必要がある．具体的には，Makefileの先頭付近に記述されている，各システムコール関数のオブジェクトファイルが代入されるobj-yという変数に対して，新たに作成したシステムコールのオブジェクトファイルも代入されるように追記する．本手順書における，このMakefileの編集内容(編集した部分のみ抜粋)を以下に示す．なお，ここでは削除した行の先頭に-を，追加した行の先頭に＋を挿入している．
 
 \begin{verbatim}
-　#
-　# Makefile for the linux kernel
-　#
-　
+ #
+ # Makefile for the linux kernel
+ #
+
  obj-y     = fork.o exec_domain.o panic.o \
              cpu.o exit.o itimer.o time.o softirq.o resource.o \
              sysctl.o sysctl_binary.o capability.o ptrace.o timer.o user.o \
@@ -187,15 +187,96 @@ makeコマンドは，このファイルの内容に基づいて実行される�
 \end{verbatim}
 
 \subsection{カーネルの再構築}
+\subsubsection{概要}
+本節では，カーネル再構築の手順について述べる．本節において示される操作は，とくに断りがない限り，すべて/home/username/git/linux-stable以下で行う．なお，このパスの中のusernameは，本手順書の操作を行う計算機にログインしているユーザ名に置き換える．また，以降で現れるusernameもすべて同様である．
 \subsubsection{.configファイルの作成}
-カーネルを再構築するにあたり，はじめに，.configファイルを作成する．これは，カーネルの設定ファイルである．
+カーネルを再構築するにあたり，はじめに，.configファイルを作成する．これは，カーネルの設定ファイルである．以下のコマンドを実行する．
+\begin{description}
+\item[] \$ make defconfig
+\end{description}
+上記コマンドの実行により，x86\_64\_defconfignファイルに基づき，.configファイルが/home/username/git/linux-stable以下に生成される．
 \subsubsection{カーネルのコンパイル}
+システムコールを追加するカーネルをコンパイルする．以下のコマンドを実行する．
+\begin{description}
+\item[] \$ make bzImage -j8
+\end{description}
+上記コマンドの実行により，bzImageという名前の圧縮カーネルイメージと，System.mapというファイルが生成され，前者はhome/username/git/linux-stable/arch/x86/boot以下，後者は/home/username/git/linux-stable以下に配置される．上記コマンドに付与されている-jオプションは，同時に実行できるジョブ数を指定するものである．これはジョブ数の増加による実行速度の低下を防止するための措置である．また，このときのジョブ数は，"CPUのコア数*2が効果的である"\cite{bootcamp}とされる．
 \subsubsection{カーネルのインストール}
+コンパイルしたカーネルのインストールを行う．以下のコマンドを実行する．
+\begin{description}
+\item[] \$ sudo cp /home/username/git/linux-stable/arch/x86/boot/bzImage /boot/vmlinuz-3.15.0-linux
+\item[] \$ sudo cp /home/username/git/linux-stable/System.map /boot/System.map-3.15.0-linux
+\end{description}
+上記コマンドの実行により，カーネルをコンパイルした際に生成された，bzImageとSystem.mapが/boot以下にコピーされ，カーネルのインストールが完了する．
 \subsubsection{カーネルモジュールのコンパイル}
+カーネルモジュールをコンパイルする．以下のコマンドを実行する．
+\begin{description}
+\item[] \$ make modules
+\end{description}
+上記コマンドの実行により，カーネルモジュールがコンパイルされる．
 \subsubsection{カーネルモジュールのインストール}
+コンパイルしたカーネルモジュールのインストールする．以下のコマンドを実行する．
+\begin{description}
+\item[] \$ make modules\_install
+\end{description}
+上記コマンドの実行により，コンパイルしたカーネルモジュールがインストールされる．このとき，端末に実行結果が出力されるが，その最下行には以下のような表記がある．
+\begin{description}
+\item[] DEPMOD 3.15.0+
+\end{description}
+この，DEPMOD以後に続く3.15.0＋という部分が，カーネルモジュールがインストールされたディレクトリ名である．なお，このディレクトリ名は環境によって異なる．
+\subsubsection{初期RAMディスクの作成}
+カーネルの再構築において，本項以降の操作は，対象となるカーネルの初回の構築時のみ必要な手順である．初期RAMディスクを作成する．本指示書では，以下のコマンドを実行するが，このとき，6項でカーネルがインストールされたディレクトリ名を引数として与えている．本節第6項で述べたように，このディレクトリ名は環境によって変わるため，カーネルモジュールをインストールした際の実行結果をみて，適宜書き換える．
+\begin{description}
+\item[] \$ sudo update-initramfs -c -k 3.15.0+
+\end{description}
+上記コマンドの実行により，初期RAMディスクが作成される．
+\subsubsection{ブートローダの設定と再起動}
+ブートローダの設定と再起動を行う．本手順書における環境では，ブートローダはGRUB2が用いられている．このブートローダの設定ファイルは/boot/grub/grub.cfgであるが，このファイルはgurbのコマンドによって自動生成され，直接編集してはいけないことになっている．/etc/grub.d以下にあるファイルが，この設定ファイルが生成されるときに用いられるテンプレートとなるので，このディレクトリにスクリプトを追加した後，コマンドを用いて設定ファイルを書き換える．その後1度シャットダウンし，システムコールを追加したカーネルで再起動する．その手順を以下に述べる．
+\begin{enumerate}
+  \item 追加するスクリプトの作成\\
+    柄するスクリプトを作成する．スクリプトのファイル名であるが，本手順書では/etc/grub.dにあるREADMEファイルの説明に沿うように11\_linux-3.15.0とする．このスクリプトの内容を以下に示す．\\
+    
+\begin{verbatim}
+1 #!/bin/sh -e
+2 echo "Adding my custom Linux to GRUB2"
+3 cat << EOF
+4 menuentry "My custom Linux" {
+5 set root=(hd0,1)
+6 linux /vmlinuz-3.15.0-linux ro root=/dev/sda2 quiet
+7 initrd /initrd.img-3.15.0
+8 }
+9 EOF
+\end{verbatim}
+%\begin{description}
+%\item[(イ)] mementry "My custom Linux"\\
+%ブートローダのカーネル選択画面に表示される名前を設定している．ここでは”My custom Linux”としている．
+%\item[(ロ)] set root=(hd0,1)\\
+%
+%\item[(ハ)] linux /vmlinuz-3.15.0-linux ro root=/dev/sda2
+%\item[(ニ)] initrd /initrd.img-3.15.0
+%\item[(ホ)]
+%\item[(へ)]
+%\end{description}
+\item 実行権限の付与\\
+  作成したスクリプトに実行権限を付与する．どのディレクトリでもよいので，以下のコマンドを実行する．\\
+  \$ sudo chmod +x /etc/grub.d/11\_linux-3.15.0\\
+  上記コマンドの実行により，11\_linux-3.15.0に実行権限が付与される．\\
+\item ブートローダ設定ファイルの再生成\\
+  ブートローダの設定ファイルを再生成する．どのディレクトリでもよいので，以下のコマンドを実行する．\\
+  \$ sudo update-grub\\
+  上記コマンドの実行により，ブートローダの設定ファイルが再生成される．そして，システムコールを追加したカーネルで起動できるようになる．\\
+\item 再起動\\
+  再起動を行う．以下のコマンドを実行する．\\
+  \$ sudo reboot \\
+  上記コマンドの実行により，計算機が再起動する．このとき，カーネル選択画面でMy custom Linuxがエントリに追加されているので，それを選択し，起動する．
+\end{enumerate}
+
+
+上記スクリプトを/etc/grub.d以下に作成することで，
+システムコールを追加したカーネルがブートローダから起動可能になる．
 \section{動作テスト}
 \subsection{概要}
-本章では，実装したシステムコールの動作テストについて述べる．以降では，動作テスト用プログラムの準備と，動作テストの手順について，順に節を設け述べる．
+本章では，追加したシステムコールの動作テストについて述べる．簡単なプログラムを用いて，追加したシステムコールの呼び出しを行い，その振る舞いが意図したものであるか確認する．以降では，動作テスト用プログラムの準備と，動作テストの手順について，順に節を設け述べる．
 \subsection{動作テスト用プログラムの準備}
 prt\_to\_rbufの動作テストに用いるプログラムを作成する．本手順書における動作テスト用プログラムを以下に示す．
 \begin{verbatim}
@@ -213,17 +294,23 @@ int main(){
 }
 \end{verbatim}
 \subsection{動作テストの手順}
-動作テストの手順を以下に示す．
+追加したシステムコールの動作テストの手順を以下に示す．
 \begin{enumerate}
 \item 動作テスト用プログラムの実行
 \item dmesgコマンドの実行
 \end{enumerate}
-
+上記のとおり，まず動作テストプログラムを実行する．本手順書における動作テスト用プログラムは，実行時に任意の文字列の入力を要求する．今回は，”under the water”と入力する．このとき，追加したシステムコールが適切に動作していれば，カーネルバッファに先ほどのの文字列”under the water”が書き込まれているはずである．そこで，カーネルバッファの内容を端末に出力するため，dmesgコマンドを実行する．このときの出力結果を以下に示す．
+\begin{verbatim}
+[12300.934433] under the water
+[12300.934434] 18 charactor(s) outputed
+\end{verbatim}
+上記の結果により，指定した文字列"nuder the water"がカーネルバッファに書き込まれていることがわかる．追加したシステムコールは，意図した動作をしていると言える．
 \section{おわりに}
-
-本資料では
+本手順書では，Linuxカーネルに対して新たにシステムコールを追加する手順について述べた．さらに，追加したシステムコールが，意図した動作をしているかどうかを調べるテストの手順について述べた．
 
 \bibliographystyle{ipsjunsrt}
 \bibliography{mybibdata}
-
+\begin{thebibliography}{1}
+\bibitem{bootcamp} 小倉 伊織， 新人研修資料，https:\slash{}\slash{}github.com\slash{}nomlab\slash{}BootCamp\slash{}blob\slash{}master\slash{}2018\slash{}README.org
+\end{thebibliography}
 \end{document}
