@@ -1,4 +1,4 @@
-This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2015/dev/Debian) (preloaded format=platex 2018.4.2)  13 APR 2018 11:07
+This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2015/dev/Debian) (preloaded format=platex 2018.4.2)  16 APR 2018 10:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -131,54 +131,36 @@ LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
 
 [1
 
-]
-Overfull \hbox (8.95486pt too wide) in paragraph at lines 116--116
+] [2] [3]
+Overfull \hbox (8.95486pt too wide) in paragraph at lines 171--171
 [] \OT1/cmtt/m/n/10 868 asmlinkage long sys_finit_module(int fd, const char __u
 ser *uargs, int flags);[] 
  []
 
-[2] [3]
-Overfull \hbox (63.18306pt too wide) in paragraph at lines 217--218
-[]\OT1/cmtt/m/n/10 $ git clone git://git.kernel.org/pub/scm/linux/kernel/git/st
-able/linux-stable.git 
- []
-
-
-Overfull \hbox (18.85498pt too wide) in paragraph at lines 236--237
-\JY1/mc/m/n/10 実行により ， \OT1/cmr/m/n/10 x86[]64[]defconfign \JY1/mc/m/n/10
- フ ァイルに基づき ， \OT1/cmr/m/n/10 .con-fig \JY1/mc/m/n/10 フ ァイルが\OT1/c
-mtt/m/n/10 /home/username/git/linux-stable
- []
-
 [4]
-Overfull \hbox (73.44516pt too wide) in paragraph at lines 246--247
-[]\OT1/cmtt/m/n/10 $ sudo cp /home/username/git/linux-stable/arch/x86/boot/bzIm
-age /boot/vmlinuz-3.15.0-linux 
+Overfull \hbox (50.37573pt too wide) in paragraph at lines 213--214
+\JY1/mc/m/n/10 実行により ， \OT1/cmtt/m/n/10 x86\_64\_defconfign \JY1/mc/m/n/1
+0 フ ァイルに基づき ， \OT1/cmtt/m/n/10 .config \JY1/mc/m/n/10 フ ァイルが\OT1/
+cmtt/m/n/10 /home/username/git/linux-stable
  []
 
-
-Overfull \hbox (31.44553pt too wide) in paragraph at lines 247--248
-[]\OT1/cmtt/m/n/10 $ sudo cp /home/username/git/linux-stable/System.map /boot/S
-ystem.map-3.15.0-linux 
- []
-
-
-Underfull \hbox (badness 1394) in paragraph at lines 249--250
+[5]
+Underfull \hbox (badness 1394) in paragraph at lines 228--229
 \JY1/mc/m/n/10 実行により ， カ ーネルをコンパイルした際に生成された ， \OT1/cm
 tt/m/n/10 bzImage \JY1/mc/m/n/10 と \OT1/cmtt/m/n/10 System.map \JY1/mc/m/n/10 
 が ，
  []
 
-[5] [6] [7]
+[6] [7] [8]
 No file sys_proc.bbl.
-[8] [9] (./sys_proc.aux) ) 
+[9] (./sys_proc.aux) ) 
 Here is how much of TeX's memory you used:
- 831 strings out of 494934
- 9648 string characters out of 6180150
- 67642 words of memory out of 5000000
- 4226 multiletter control sequences out of 15000+600000
+ 830 strings out of 494934
+ 9642 string characters out of 6180150
+ 66642 words of memory out of 5000000
+ 4225 multiletter control sequences out of 15000+600000
  12812 words of font info for 60 fonts, out of 8000000 for 9000
  269 hyphenation exceptions out of 8191
- 25i,8n,21p,489b,330s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 25i,8n,21p,506b,330s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on sys_proc.dvi (9 pages, 22884 bytes).
+Output written on sys_proc.dvi (9 pages, 23048 bytes).
