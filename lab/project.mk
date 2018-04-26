@@ -5,7 +5,7 @@
 # If the main TeX file is ``myproject.tex'', set:
 #   PROJECT = myproject
 #
-PROJECT = sys_proc
+PROJECT = spec
 
 # If you have your own bib file ``mybibfile.bib'', set:
 #   PROJECT_BIB = mybibfile.bib

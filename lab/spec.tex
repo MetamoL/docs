@@ -1,0 +1,147 @@
+\documentclass[12pt]{jsarticle}
+\usepackage[dvipdfmx]{graphicx}
+\textheight = 25truecm
+\textwidth = 18truecm
+\topmargin = -1.5truecm
+\oddsidemargin = -1truecm
+\evensidemargin = -1truecm
+\marginparwidth = -1truecm
+
+\def\theenumii{\Alph{enumii}}
+\def\theenumiii{\alph{enumiii}}
+\def\labelenumi{(\theenumi)}
+\def\labelenumiii{(\theenumiii)}
+\def\theenumiv{\roman{enumiv}}
+\def\labelenumiv{(\theenumiv)}
+\usepackage{comment}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% sty/ にある研究室独自のスタイルファイル
+\usepackage{jtygm}  % フォントに関する余計な警告を消す
+\usepackage{nutils} % insertfigure, figref, tabref マクロ
+
+\def\figdir{./figs} % 図のディレクトリ
+\def\figext{pdf}    % 図のファイルの拡張子
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 表題
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+{\LARGE SlackBotプログラム仕様書}
+\end{center}
+
+\begin{flushright}
+  2018/4/26\\
+  吉田 修太郎
+\end{flushright}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 概要
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{概要}
+\label{sec:introduction}
+%\section{概要} % ※400～1,200文字程度
+% - レポートの概要を述べる
+\section{対象とする利用者}
+本プログラムは，以下のアカウントを所持する利用者を対象としている．
+\begin{enumerate}
+\item Slackアカウント
+\item Herokuアカウント
+\item GitHubアカウント
+\end{enumerate}
+GitHubアカウントは，本プログラムによってissueの追加する機能やissueを一覧にして返信する機能を利用する場合に必要となる．
+\section{機能}
+本プログラムは，Slackでの``@SYBot''から始まる発言に対して，その発言の``@SYBot''以降の内容に応じて返信する．本プログラムが持つ機能について，以下に述べる．
+\begin{enumerate}
+\item 任意の文字列を返信する機能\\
+  ユーザが``@SYBot 「(任意の文字列)」と言って''と発言した場合，その発言の内の(任意の文字列)の部分を返信する．たとえば，ユーザの``@SYBot 「はじめまして」と言って''という発言には，``はじめまして''と返信する．
+\item 設定されたGitHubリポジトリのissueを一覧にして返信する機能\\
+  ユーザが``@SYBot get issue''と発言した場合，設定されたGitHubリポジトリのopen状態のissueを取得し，取得したissue全てのタイトルを返信する．
+\item 設定されたGitHubリポジトリにissueを追加する機能\\
+  ユーザが``@SYBot make issue t:(title)b:(body)''と発言した場合，設定されたGitHubリポジトリに新たなissueを追加する．発言中の(title)と(body)は任意の文字列である．ただし，(title)は作成するissueのタイトルであり，(body)は作成するissueの本文である．``t:(title)''の部分は入力が必須であるが，``b:(body)''の部分は入力しなくてもよい．さらに，issueの追加が正常に行われた場合は``created''を返信し，追加に失敗した場合は``creation faild:(message)''を返信する．返信中の(message)は，GitHubのAPIから送信されるmessageの値である．APIからエラーが返ってくる場合，messageにはエラーの種類を示す文字列が格納されている．
+\end{enumerate}
+\section{動作環境}
+本プログラムはHeroku上で動作する．Herokuとは，ソフトウェアを構築し，稼働させるためのプラットフォームである．Herokuの動作環境を表\ref{table1}に示す．
+\begin{table}[h!]
+  \begin{center}
+    \caption{Herokuの動作環境}%\label{tab:time_range_ratio}
+    %\ecaption{Frequency of task ocurrences.}
+    \begin{tabular}{l|l}
+      \hline\hline
+      OS & Debian 8.1\\
+      \hline
+      CPU & Intel(R) Core(TM) i5-4590\\
+      \hline
+      メモリ & 1.0GB\\
+      \hline
+      Ruby & ruby 2.1.5p273\\
+      \hline
+      Ruby Gem & bundler 1.16.1\\
+      & mustermann 1.0.2\\
+      & rack 2.0.4\\
+      & rack-protection 2.0.1\\
+      & tilt 2.0.8\\
+      & sinatra 2.0.1\\
+      \hline
+    \end{tabular}
+    \label{table1}
+  \end{center}
+\end{table}
+\section{環境構築}
+\subsection{概要}
+本章では，本プログラムの動作のために，環境構築を行う．環境構築のために設定が必要な項目を以下に示す．
+\begin{enumerate}
+\item Herokuの設定
+\item Slackの着信Webフックの設定
+\item Slackの発信Webフックの設定
+\item GitHubのAPIの認証設定
+\end{enumerate}
+上記の各項目について，次節で項を設け説明する．
+\subsection{手順}
+\subsubsection{Herokuの設定}
+\begin{enumerate}
+\item Herokuアカウントの作成
+\item パッケージのダウンロード
+\item アプリケーションの作成
+\end{enumerate}
+\subsubsection{Slackの着信Webフックの設定}
+\begin{enumerate}
+\item 
+\item
+\item 
+\end{enumerate}
+\subsubsection{Slackの発信Webフックの設定}
+\begin{enumerate}
+\item 
+\item 
+\item 
+\end{enumerate}
+\subsubsection{Herokuの環境変数の設定}
+Herokuの環境変数を設定する．以下のコマンドを実行する．
+\begin{description}
+\item \verb|$ heroku config:set INCOMING_WEBHOOK_URL="<incoming_webhook_url>"|\\
+\verb|$ heroku config:set USERNAME=<username>|\\
+\verb|$ heroku config:set PASSWORD=<password>|
+\end{description}
+実行後，着信WebフックのURL，GitHubのUsername，およびGitHubのPasswordが環境変数として設定される．
+\section{使用方法}
+本プログラムは，Herokuにデプロイして使用する．本プログラムをHerokuで管理しているディレクトリで，以下のコマンドを実行する．
+\begin{description}
+\item[] \verb|$ git push heroku master|
+\end{description}
+実行後，本プログラムがHerokuにデプロイされ，本プログラムの機能が利用可能となる．
+\section{エラー処理と保証しない動作}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 参考文献リスト
+
+\begin{thebibliography}{1}
+  \bibitem{bootcamp} 乃村研究室 資料　https:\slash{}\slash{}github.com\slash{}nomlab\slash{}BootCamp\slash{}blob\slash{}master\slash{}2018\slash{}README.org
+\end{thebibliography}
+
+%\bibliographystyle{ipsjunsrt}
+%\bibliography{mybibdata}
+
+\end{document}

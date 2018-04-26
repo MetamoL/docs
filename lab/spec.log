@@ -1,9 +1,9 @@
-This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2015/dev/Debian) (preloaded format=platex 2018.4.2)  20 APR 2018 10:43
+This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2015/dev/Debian) (preloaded format=platex 2018.4.2)  26 APR 2018 08:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**sys_proc.tex
-(./sys_proc.tex
+**spec.tex
+(./spec.tex
 pLaTeX2e <2006/11/10> (based on LaTeX2e <2014/05/01> patch level 0)
 Babel <3.9l> and hyphenation patterns for 11 languages loaded.
 (/usr/share/texlive/texmf-dist/tex/platex/jsclasses/jsarticle.cls
@@ -73,8 +73,8 @@ Excluding comment 'comment') (sty/jtygm.sty
 Package: jtygm 1998/06/12 based on v1.3 KANJI font defines
 ) (sty/nutils.sty
 Package: nutils 2014/11/22 v1.0 by Yoshinari Nomura
-) (./sys_proc.aux)
-\openout1 = `sys_proc.aux'.
+) (./spec.aux)
+\openout1 = `spec.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
 LaTeX Font Info:    ... okay on input line 26.
@@ -104,56 +104,42 @@ LaTeX Font Info:    Font shape `JT1/gt/m/n' will be
 (Font)              scaled to size 13.83836pt on input line 41.
 LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
 (Font)              scaled to size 13.83836pt on input line 41.
-LaTeX Font Info:    Font shape `JT1/gt/m/n' will be
-(Font)              scaled to size 9.60999pt on input line 42.
-LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
-(Font)              scaled to size 9.60999pt on input line 42.
 LaTeX Font Info:    Font shape `JT1/mc/m/n' will be
-(Font)              scaled to size 8.64899pt on input line 56.
+(Font)              scaled to size 8.64899pt on input line 67.
 LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
-(Font)              scaled to size 8.64899pt on input line 56.
+(Font)              scaled to size 8.64899pt on input line 67.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 58.
+(Font)              <7> on input line 69.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 58.
+(Font)              <5> on input line 69.
 LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
-(Font)              scaled to size 6.72699pt on input line 58.
+(Font)              scaled to size 6.72699pt on input line 69.
 LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
-(Font)              scaled to size 4.805pt on input line 58.
-LaTeX Font Info:    Font shape `JT1/mc/m/n' will be
-(Font)              scaled to size 11.53198pt on input line 74.
-LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
-(Font)              scaled to size 11.53198pt on input line 74.
-LaTeX Font Info:    Font shape `JT1/gt/m/n' will be
-(Font)              scaled to size 11.53198pt on input line 74.
-LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
-(Font)              scaled to size 11.53198pt on input line 74.
+(Font)              scaled to size 4.805pt on input line 69.
 
 [1
 
-] [2] [3]
-Overfull \hbox (8.95486pt too wide) in paragraph at lines 167--167
-[] \OT1/cmtt/m/n/10 868 asmlinkage long sys_finit_module(int fd, const char __u
-ser *uargs, int flags);[] 
- []
-
-[4]
-Underfull \hbox (badness 1394) in paragraph at lines 216--217
-\JY1/mc/m/n/10 実行により ， カ ーネルをコンパイルした際に生成された ， \OT1/cm
-tt/m/n/10 bzImage \JY1/mc/m/n/10 と \OT1/cmtt/m/n/10 System.map \JY1/mc/m/n/10 
-を ，
- []
-
-[5] [6] [7] [8]
-No file sys_proc.bbl.
-[9] (./sys_proc.aux) ) 
+]
+LaTeX Font Info:    Font shape `JT1/mc/m/n' will be
+(Font)              scaled to size 11.53198pt on input line 91.
+LaTeX Font Info:    Font shape `JY1/mc/m/n' will be
+(Font)              scaled to size 11.53198pt on input line 91.
+LaTeX Font Info:    Font shape `JT1/gt/m/n' will be
+(Font)              scaled to size 11.53198pt on input line 91.
+LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
+(Font)              scaled to size 11.53198pt on input line 91.
+LaTeX Font Info:    Font shape `JT1/gt/m/n' will be
+(Font)              scaled to size 9.60999pt on input line 101.
+LaTeX Font Info:    Font shape `JY1/gt/m/n' will be
+(Font)              scaled to size 9.60999pt on input line 101.
+ [2] [3] (./spec.aux) ) 
 Here is how much of TeX's memory you used:
- 830 strings out of 494934
- 9630 string characters out of 6180150
+ 827 strings out of 494934
+ 9591 string characters out of 6180150
  66642 words of memory out of 5000000
- 4225 multiletter control sequences out of 15000+600000
+ 4223 multiletter control sequences out of 15000+600000
  12812 words of font info for 60 fonts, out of 8000000 for 9000
  269 hyphenation exceptions out of 8191
- 25i,8n,21p,524b,385s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 25i,8n,21p,449b,330s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on sys_proc.dvi (9 pages, 25036 bytes).
+Output written on spec.dvi (3 pages, 6948 bytes).
