@@ -1,0 +1,206 @@
+\documentclass[12pt]{jsarticle}
+\usepackage[dvipdfmx]{graphicx}
+\textheight = 25truecm
+\textwidth = 18truecm
+\topmargin = -1.5truecm
+\oddsidemargin = -1truecm
+\evensidemargin = -1truecm
+\marginparwidth = -1truecm
+
+\def\theenumii{\Alph{enumii}}
+\def\theenumiii{\alph{enumiii}}
+\def\labelenumi{(\theenumi)}
+\def\labelenumiii{(\theenumiii)}
+\def\theenumiv{\roman{enumiv}}
+\def\labelenumiv{(\theenumiv)}
+\usepackage{comment}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% sty/ にある研究室独自のスタイルファイル
+\usepackage{jtygm}  % フォントに関する余計な警告を消す
+\usepackage{nutils} % insertfigure, figref, tabref マクロ
+
+\def\figdir{./figs} % 図のディレクトリ
+\def\figext{pdf}    % 図のファイルの拡張子
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 表題
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+{\LARGE SlackBotプログラム仕様書}
+\end{center}
+
+\begin{flushright}
+  2018/4/26\\
+  吉田 修太郎
+\end{flushright}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 概要
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{概要}
+\label{sec:introduction}
+%\section{概要} % ※400～1,200文字程度
+% - レポートの概要を述べる
+\section{課題内容}
+以下の2つの機能を持つSlackBotプログラムをRubyで作成する．
+\begin{enumerate}
+\item 任意の文字列を投稿するプログラムの作成\\
+  受信した投稿の中に``「○○○」と言って''という文字列があった場合は``○○○''と投稿する．
+\item SlackBotプログラムへの機能追加\\
+  SlackBotプログラムへ機能を追加する．Slack以外のWebサービスのAPIやWebhookを利用した機能を追加する．
+\end{enumerate}
+\section{自主的に実装した機能}
+\section{実装できなかった機能}
+\section{理解できなかった部分}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{対象とする利用者}
+本プログラムは，以下のアカウントを所持する利用者を対象としている．
+\begin{enumerate}
+\item Slackアカウント
+\item Herokuアカウント
+\item GitHubアカウント
+\end{enumerate}
+GitHubアカウントは，本プログラムによって，issueの追加する機能，issueの一覧を投稿する機能を利用する場合に必要となる．
+\section{機能}
+本プログラムは，Slackでの``@SYBot''から始まる投稿に対して，その投稿の``@SYBot''以降の内容に応じて投稿する．本プログラムが持つ機能について，以下に述べる．
+\begin{description}
+\item[(機能1)] 任意の文字列を返信する機能\\
+  ユーザが``@SYBot 「(任意の文字列)」と言って''と投稿した場合，その投稿中の(任意の文字列)の部分のみを投稿する．たとえば，ユーザから``@SYBot 「はじめまして」と言って''という投稿があれば，``はじめまして''と投稿する．
+\item[(機能2)] 設定されたGitHubリポジトリのissueを一覧にして返信する機能\\
+  ユーザが``@SYBot get issue''と投稿した場合，設定されたGitHubリポジトリのopen状態のissueを取得し，取得したissue全てのタイトルを返信する．
+\item[(機能3)] 設定されたGitHubリポジトリにissueを追加する機能\\
+  ユーザが``@SYBot make issue t:(title)b:(body)''と投稿した場合，設定されたGitHubリポジトリに新たなissueを追加する．投稿中の(title)と(body)は任意の文字列である．ただし，(title)は作成するissueのタイトルであり，(body)は作成するissueの本文である．``t:(title)''の部分は入力が必須であるが，``b:(body)''の部分は入力しなくてもよい．さらに，issueの追加が正常に行われた場合は``created''を投稿し，追加に失敗した場合は``creation faild:(message)''を投稿する．投稿中の(message)は，GitHubのAPIから返されるエラーの種類を示す文字列である．
+\end{description}
+\section{動作環境}
+本プログラムはHeroku上で動作する．Herokuとは，ソフトウェアを構築し，稼働させるためのプラットフォームである．Herokuの動作環境を表\ref{table1}に示す．
+\begin{table}[h!]
+  \begin{center}
+    \caption{Herokuの動作環境}%\label{tab:time_range_ratio}
+    %\ecaption{Frequency of task ocurrences.}
+    \begin{tabular}{l|l}
+      \hline\hline
+      OS & Debian 8.1\\
+      \hline
+      CPU & Intel(R) Core(TM) i5-4590\\
+      \hline
+      メモリ & 1.0GB\\
+      \hline
+      Ruby & ruby 2.1.5p273\\
+      \hline
+      Ruby Gem & bundler 1.16.1\\
+      & mustermann 1.0.2\\
+      & rack 2.0.4\\
+      & rack-protection 2.0.1\\
+      & tilt 2.0.8\\
+      & sinatra 2.0.1\\
+      \hline
+    \end{tabular}
+    \label{table1}
+  \end{center}
+\end{table}
+\section{環境構築}
+
+\subsection{概要}
+本章では，本プログラムの動作のために，環境構築を行う．環境構築のために設定が必要な項目を以下に示す．
+\begin{enumerate}
+\item Herokuの設定
+\item Incoming WebHooksの設定
+\item Outgoing WebHooksの設定
+\item 環境変数の設定
+\end{enumerate}
+上記の各項目について，次節で項を設け説明する．
+
+\subsection{手順}
+
+\subsubsection{Herokuの設定}\label{heroku}
+\begin{enumerate}
+\item Herokuアカウントの作成\\
+  以下のURLにアクセスし，「Sign up」から新規のHerokuアカウントを作成する．
+\begin{verbatim}
+https://www.heroku.com/
+\end{verbatim}
+\item 使用する言語の登録\\
+  登録したアカウントでHerokuにログインし，「Getting Started with Heroku」の使用する言語として「Ruby」を選択する．
+\item CLIのダウンロード\\
+  「I'm ready to start」をクリックし，「Download Heroku CLI for...」からCLIをダウンロードする．CLIとはCommand Line Interfaceのことであり，ダウンロード後に端末からHerokuのコマンドが実行可能となる．
+\item アプリケーションの作成\\
+  Herokuにログインし，Heroku上にアプリケーションを作成する．以下のコマンドを実行し，ログインする．
+\begin{verbatim}
+$ heroku login
+\end{verbatim}
+ログイン後，本プログラムの存在するディレクトリで以下のコマンドを実行する．
+\begin{verbatim}
+$ heroku create <app_name>
+\end{verbatim}
+ただし，\verb|<app_name>|は作成するアプリケーション名である．アプリケーション名はアルファベット小文字，数字，およびハイフンのみからなる任意の文字列である．
+
+\subsubsection{Incoming WebHooksの設定}\label{incom}
+\begin{enumerate}
+\item 以下のURLにアクセスする．
+\begin{verbatim}
+https://<team_name>.slack.com/apps/manage/custom-integrations
+\end{verbatim}
+ただし，\verb|<team_name>|は自分のSlackアカウントの所属チーム名である．
+\item 「Incoming WebHooks」をクリックする．
+\item 「Add Configuration」をクリックする．
+\item 「Choose a channel...」から本プログラムから受信した文字列を投稿するチャンネルを選択する．
+\item 「Add Incoming WebHooks integration」をクリックする．
+\item 「Webhook URL」の欄に表示されているURLを控えておく．
+\item 「Save Settings」をクリックする．
+\end{enumerate}
+\subsubsection{Outgoing WebHooksの設定}
+\begin{enumerate}
+\item 以下のURLにアクセスする．
+\begin{verbatim}
+https://<team_name>.slack.com/apps/manage/custom-integrations
+\end{verbatim}
+ただし，\verb|<team_name>|は自分のSlackアカウントの所属チーム名である．
+\item 「Outgoing WebHooks」をクリックする．
+\item 「Add Configuration」をクリックする．
+\item 「Add Incoming WebHooks integration」をクリックする．
+\item 各項目を設定する．
+  \begin{enumerate}
+  \item 「Channel」の項目に，本プログラムに投稿を監視させたいチャンネルを設定する．
+  \item 「Trigger Word(s)」の項目に，``@SYBot''を設定する．
+  \item 「URL(s)」の項目に，\verb|https://<app_name>.herokuapp.com/slack|を設定する．\\
+    ただし，\verb|<app_name>|は，\ref{heroku}項で作成したアプリケーション名である．
+  \item
+  \end{enumerate}
+\item 「Save Settings」をクリックする．
+\end{enumerate}
+\subsubsection{環境変数の設定}
+ 以下のコマンドを実行し，Herokuの環境変数を設定する．
+ \begin{description}
+ \item \verb|$ heroku config:set INCOMING_WEBHOOK_URL="<incoming_webhook_url>"|\\
+   \verb|$ heroku config:set USERNAME=<username>|\\
+   \verb|$ heroku config:set PASSWORD=<password>|
+ \end{description}
+ ただし，\verb|<incoming_webhook_url>|は\ref{incom}項で控えておいたURLである．
+ 実行後，Incoming WebHooksのURL，GitHubのUsername，およびGitHubのPasswordが環境変数として設定される．
+\end{enumerate}
+
+\section{使用方法}
+本プログラムは，Herokuにデプロイして使用する．本プログラムをHerokuで管理しているディレクトリで，以下のコマンドを実行する．
+\begin{description}
+\item[] \verb|$ git push heroku master|
+\end{description}
+実行後，本プログラムがHerokuにデプロイされ，本プログラムの機能が利用可能となる．
+\section{エラー処理と保証しない動作}
+\subsection{エラー処理}
+
+\subsection{保証しない動作}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 参考文献リスト
+
+\begin{thebibliography}{1}
+  \bibitem{bootcamp} 乃村研究室 資料　https:\slash{}\slash{}github.com\slash{}nomlab\slash{}BootCamp\slash{}blob\slash{}master\slash{}2018\slash{}README.org
+\end{thebibliography}
+
+%\bibliographystyle{ipsjunsrt}
+%\bibliography{mybibdata}
+
+\end{document}
