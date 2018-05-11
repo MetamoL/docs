@@ -1,0 +1,104 @@
+\documentclass[12pt]{jsarticle}
+\usepackage[dvipdfmx]{graphicx}
+\textheight = 25truecm
+\textwidth = 18truecm
+\topmargin = -1.5truecm
+\oddsidemargin = -1truecm
+\evensidemargin = -1truecm
+\marginparwidth = -1truecm
+
+\def\theenumii{\Alph{enumii}}
+\def\theenumiii{\alph{enumiii}}
+\def\labelenumi{(\theenumi)}
+\def\labelenumiii{(\theenumiii)}
+\def\theenumiv{\roman{enumiv}}
+\def\labelenumiv{(\theenumiv)}
+\usepackage{comment}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% sty/ にある研究室独自のスタイルファイル
+\usepackage{jtygm}  % フォントに関する余計な警告を消す
+\usepackage{nutils} % insertfigure, figref, tabref マクロ
+
+\def\figdir{./figs} % 図のディレクトリ
+\def\figext{pdf}    % 図のファイルの拡張子
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 表題
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+  {\LARGE 記録書 No.1}\\
+  {\verb|(2018/04/02 ~ 2018/04/23|)}
+\end{center}
+
+\begin{flushright}
+  2018/4/19\\
+  吉田 修太郎 
+\end{flushright}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 概要
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{前回ミーティングからの指導・指摘事項}
+\label{sec:introduction}
+\begin{enumerate}
+\item 誰かの話を聞くときは，後で質問やコメントができるようにする．(4/4, 104号室，乃村先生)
+\end{enumerate}
+
+\section{実績}\label{jisseki}
+\subsection{研究関連}\label{kenkyuu}
+\begin{enumerate}
+\item 2018年度B4新人研修課題に関する項目
+  \begin{enumerate}
+  \item Debianのインストール(100\% +100\%)
+  \item Linuxカーネルの再構築(100\% +100\%)
+  \item システムコールの実装(100\% +100\%)
+  \item システムコール実装の手順書作成(80\% +80\%)
+  \item RubyによるSlackBotプログラムの作成(15\% +15\%)
+  \item RubyによるSlackBotプログラムの報告書作成(0\% +0\%)
+  \end{enumerate}
+\end{enumerate}
+\subsection{研究室関連}\label{kenkyuushitu}
+\begin{enumerate}
+\item (4/2) 平成30年度SWLAB新B4ガイダンス
+\item (4/3) 第349回New打ち合わせ
+\item (4/3) Web勉強会
+\item (4/3) rbenv勉強会
+\item (4/4) Git勉強会
+\item (4/4) 乃村研お花見
+\item (4/18) 第350回New打ち合わせ
+\item (4/19) 乃村研ミーティング
+\end{enumerate}
+\subsection{大学関連}\label{daigaku}
+\begin{enumerate}
+\item (4/9，10，16，17) 非手続き型言語
+\end{enumerate}
+
+\section{詳細および反省・感想}
+\subsection{研究関連}
+\begin{description}
+\item[(1.D)] 現在，先輩方からの助言に従い，作成した手順書の修正を行っている．4/20が自分で設定した締切りとなっているため，前日の4/19中に完成させる．
+\end{description}
+\subsection{研究室関連}
+\begin{description}
+\item[(5)] 本Git勉強会では，Gitの概要と，その仕組み，および使い方について学んだ．これまでほとんどGitを利用することがなかったが，これを機に積極的にGitを利用し，Gitを十分に使いこなせるようになる．
+\end{description}
+\subsection{大学関連}
+
+\section{今後の予定}
+\subsection{研究関連}
+\begin{enumerate}
+\item (4/27) 第351回New打ち合わせ
+\item (5/11) Patchwork Okayama -2018
+\end{enumerate}
+\subsection{研究室関連}
+\subsection{大学関連}
+\begin{enumerate}
+\item (4/23, 24，5/1，7，14，15)非手続き型言語 
+\end{enumerate}
+
+\bibliographystyle{ipsjunsrt}
+%\bibliography{mybibdata}
+%\begin{thebibliography}{}
+%\end{thebibliography}
+\end{document}
