@@ -1,0 +1,124 @@
+\documentclass[11pt,a4j]{jarticle}
+\usepackage{comment}
+
+\title{情報工学実験A}
+\author{吉田修太郎 \and 09425562}
+\date{提出日:2017/05/26 \\
+      締切日:2017/05/29
+}
+\begin{document}
+\maketitle
+\section{概要}
+今回の実験はSFLによるプロセッサ設計を通じてCPUの構造およびその動作について理解を深めることを目的とするものである.
+\section{プロセッサ設計課題}
+ここでは今回設計した32bitプロセッサについて簡単に説明する.
+設計したのは1命令あたりのサイクル数がすべて5サイクルのものと命令毎に異なる(2~5サイクル)もの,パイプライン方式を採用したものの3種類である.命令セットはMIPS命令セット.ユニットを構成するサブモジュールの設計から合成までが,今回の課題である.構成は以下の通り.
+\begin{verbatim}
+top_p32
+ |
+ +- p32
+ |   |
+ |   +- p32decode_unit
+ |   |   |
+ |   |   +- add32
+ |   |       |
+ |   |       +- fulladder
+ |   |
+ |   +- p32exec_unit
+ |   |   |
+ |   |   +- alu32
+ |   |   |   |
+ |   |   |   +- add32
+ |   |   |       |
+ |   |   |       +- fulladder
+ |   |   |
+ |   |   +- shift32
+ |   |
+ |   +- reg32x32
+ |   |   |
+ |   |   +- reg32x8
+ |   |
+ |   +- add32
+ |       |
+ |       +- fulladder
+ |
+ +- memunit
+     |
+     +- mem64KB
+\end{verbatim}
+\subsection{サブモジュールの設計について}
+ここでは先に示したモジュールの内,論理合成したものについてその結果を示す.
+\subsubsection{add32}
+32bit加算器.fulladder(全加算器)を32個つなげた構造になっている.32bit幅の入力2つと1bitのキャリーの和を32bit信号と1bitのキャリーで出力する.
+\begin{table}[htb]
+\begin{tabular}{|l|l|l|l|l|l|l|} \hline 
+最大遅延(ns) & 最大遅延(比) & 最大動作周波数(MHz) & 等価ゲート数　& 面積(1000\mu m^{2}) & 消費電力(\mu W/MHz) & 最大消費電力(mW) \\ \hline 
+117.9 & (1.09) & 8.5 & 561 & 147.66 & 1407.7 & 11.94 \\
+\hline 
+\end{tabluar}
+\end{table}
+\subsubsection{alu32}
+32bit演算装置.各種演算を行う.加算減算はサブモジュールのadd32で行い,ほか論理演算などはそれぞれに対応した回路で行う.乗除算専用の回路は持っていない.2つの32bit入力に対する演算結果を32bitで出力する.
+\begin{table}[htb]
+\begin{tabular}{|l|l|l|l|l|l|l|} \hline
+ 最大遅延(ns) & 最大遅延(比) & 最大動作周波数(MHz) & 等価ゲート数　& 面積(1000m^{2}) & 消費電力(W/MHz) & 最大消費電力(mW) \\ \hline
+23.6 & (0.24) & 42.4 & 1647 &　430.04 & 3451.1 & 146.23 \\ \hline
+\end{tabluar}
+\end{table}
+\subsubsection{shift32}
+32bitシフタ.シフト演算を行う.32bitの入力信号に対して5bitのシフト量入力信号に基づいたシフト操作を行い,結果を32bitで出力する.
+\begin{table}[htb]
+\begin{tabular}{|l|l|l|l|l|l|l|} \hline
+最大遅延(ns) & 最大遅延(比) & 最大動作周波数(MHz) & 等価ゲート数 & 面積(1000{\mu}m^{2}) & 消費電力({\mu}W/MHz) & 最大消費電力(mW) \\ \hline
+36.6 & (1.00) & 27.3 & 1249 & 311.13 & 2706.5 & 73.95 \\ \hline
+\end{tabluar}
+\end{table}
+\subsubsection{reg32x32}
+32bit幅x32のレジスタ.8bit幅x32のレジスタ4個から成る.5bitのアドレス入力信号によって指定されるレジスタに32bit幅の入力信号を書き込む.あるいは指定のレジスタの内容を32bit信号で出力する.
+\begin{table}[htb]
+\begin{tabular}{|l|l|l|l|l|l|l|} \hline
+最大遅延(ns) & 最大遅延(比) & 最大動作周波数(MHz) & 等価ゲート数　& 面積(1000{\mu}m^{2}) & 消費電力({\mu}W/MHz) & 最大消費電力(mW) \\ \hline
+26.3 & (0.82) & 38.0 & 18298 &　4964.62 & 36394.0 & 1383.80 \\ \hline
+\end{tabluar}
+\end{table}
+\section{プログラミング課題}
+ここでは今回の実験で作成したMIPSアセンブリコードによるソートプログラムについて報告する.このプログラムは設計したプロセッサのテストに用いるためのものである.手法はバブルソートを採用した.以下諸元
+\begin{table}[htb]
+\begin{tabular}{} \hline
+\hline
+\hline
+\end{tabluar}
+\end{table}
+\begin{verbatim}
+\end{verbatim}
+\section{プロセッサ設計課題}
+ここでは設計した各プロセッサの諸元を掲載する.
+\subsection{マルチサイクルモデル1}
+全ての命令が5サイクルで実行されるマルチサイクルモデル.命令フェッチ,デコード,実行,メモリアクセス,ライトバックの5ステージを経て1命令実行となる.
+\begin{table}[htb]
+\begin{tabular}{|l|l|l|l|l|l|l|} \hline
+最大遅延(ns) & 最大遅延(比) & 最大動作周波数(MHz) & 等価ゲート数 & 面積(1000{\mu}m^{2}) & 消費電力({\mu}W/MHz) & 最大消費電力(mW)　\hline
+101.8 & (1.04) & 9.8 & 28284 &　7622.07 & 56935.1 & \hline
+\end{tabluar}
+\end{table}
+\subsection{マルチサイクルモデル2}
+命令によって実行に必要なサイクル数が変わる(2~5サイクル)モデル.マルチサイクルモデル1を基本に,特定の命令を実行する場合に不要なステージをスキップする処理を付け加えている.
+\begin{table}[htb]
+\begin{tabular}{|l|l|l|l|l|l|l|} \hline
+最大遅延(ns) & 最大遅延(比) & 最大動作周波数(MHz) & 等価ゲート数　& 面積(1000{\mu}m^{2}) & 消費電力({\mu}W/MHz) & 最大消費電力(mW)　\hline
+101.8 & (1.04) & 9.8 & 28284 &　7622.07 & 56935.1 & \hline
+\end{tabluar}
+\end{table}
+\subsection{パイプラインモデル}
+パイプライン処理を実装したモデル.5つあるステージそれぞれに対応したモジュール(回路)を遊ばせない為に,全てのステージで常に何らかのジョブの処理が行われる.全ての命令が5サイクルかけて実行されるが,理論上は単純計算でマルチサイクルモデルの5倍のスループットになる.
+\begin{table}[htb]
+\begin{tabular}{|l|l|l|l|l|l|l|} \hline
+最大遅延(ns) & 最大遅延(比) & 最大動作周波数(MHz) & 等価ゲート数　& 面積(1000{\mu}m^{2}) & 消費電力({\mu}W/MHz) & 最大消費電力(mW)　\hline
+101.8 & (1.04) & 9.8 & 28284 &　7622.07 & 56935.1 & \hline
+\end{tabluar}
+\end{table}
+\section{検討・考察}
+\subsection{m1}
+\subsection{m2}
+\subsection{p1}
+\end{document}
