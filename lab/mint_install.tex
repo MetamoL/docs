@@ -39,16 +39,15 @@
 %% 概要
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{はじめに}
-本手順書では，Linuxカーネルへ新たにシステムコールを追加するための手順について述べる．本手順書で追加するシステムコールは，任意の文字列をカーネルのメッセージバッファに書き込むシステムコールである．なお，本手順書はコンソールの基本操作と\verb|Git|の基礎知識を習得している者を対象としている．
-%本手順書において示される一連の操作の中で，必要となるあらゆるパッケージ(詳細は第\ref{sec2}章に記載)はすでにインストールされているものとする．
-本手順書の章立てを以下に示す．
-\begin{description}
-\item[第1章] はじめに
-\item[第2章] Mint
-\item[第3章] システムコールの追加手順
-\item[第4章] システムコールの動作テスト
-\item[第5章] おわりに
-\end{description}
+%本手順書の章立てを以下に示す．
+%\begin{description}
+%\item[第1章] はじめに
+%\item[第2章] Mintの環境構築手順
+%\item[第3章] システムコールの追加手順
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\item[第4章] システムコールの動作テスト
+%\item[第5章] おわりに
+%\end{description}
 \section{システムコールを追加する実装環境}\label{sec2}
 本手順書においてシステムコールを追加する実装環境を表\ref{table1}に示す．
 \begin{table}[h!]
@@ -58,11 +57,9 @@
     \begin{tabular}{l|l}
       \hline\hline
       OS & Debian 7.11 \\
-      \hline
-      カーネル & Linux カーネル 3.15.0 \\
-      \hline
+      カーネル & Linux カーネル 3.2.0-4-amd64 \\
+      マザーボード & H87-PLUS (ASUSTeK COMPUTER INC.)\\
       CPU & Intel(R) Core(TM) i7-4770 \\
-      \hline
       メモリ & 16GB\\
       \hline
     \end{tabular}
@@ -70,187 +67,21 @@
   \end{center}
 \end{table}
 
-\section{システムコールの追加手順}
-\subsection{概要}
-本章では，Linuxカーネルへ新たにシステムコールを追加する手順について述べる．以降では，環境設定，Linuxカーネルの入手，ソースファイルの作成，システムコールのプロトタイプ宣言，システムコール番号の定義，Makefileの編集，およびカーネルの再構築について，それぞれに節を設けて説明する．また，本章においてファイルの内容を編集する際には，追加した行の先頭に\verb|+|を，削除した行の先頭に\verb|-|を記して編集内容を示す．なお，以降で現れる\verb|username|は，システムコールを追加する作業を行うユーザ名である．
-\subsection{環境設定}
-\begin{enumerate}
-\item \verb|sudo|権限の付与
-  \begin{description}
-  \item[] システムコールを追加する作業を行うユーザに\verb|sudo|権限を付与する．以下のコマンドを実行する．
-    \begin{description}
-    \item[] \verb|$ su|
-    \item[] \verb|# visudo|
-    \end{description}
-  \item[] 実行後，エディタが起動し，\verb|sudoers.tmp|を編集できるようになる．ここで，\verb|sudoers.tmp|を以下のように編集する．
-\begin{verbatim}
- 19 # User privilege specification
- 20 root    ALL=(ALL:ALL) ALL
-+21 username ALL=(ALL) ALL
-\end{verbatim}
-    \item[] 編集により，\verb|username|という名前のユーザに\verb|sudo|権限を付与する．
-  \end{description}
-\item ライブラリとコマンドのインストール
-  \begin{description}
-  \item[] カーネルの再構築に必要なライブラリとコマンドをインストールする．以下のコマンドを実行する．
-    \begin{description}
-    \item[] \verb|$ sudo apt-get update|
-    \item[] \verb|$ sudo apt-get install git|
-    \item[] \verb|$ sudo apt-get install gcc|
-    \item[] \verb|$ sudo apt-get install bc |
-    \item[] \verb|$ sudo apt-get install make|
-    \end{description}
-  \item[] 実行により，\verb|git|，\verb|gcc|，\verb|bc|，および\verb|make|をインストールする．これらは，以降の操作で用いるコマンドの実行に必要となる．
-  \end{description}
-\end{enumerate}
 
-\subsection{Linuxカーネルの入手}
-\begin{enumerate}
-\item ソースコードの入手
+\begin{description}
+\item[] カーネルの再構築に必要なライブラリとコマンドをインストールする．以下のコマンドを実行する．
   \begin{description}
-  \item[] Linuxカーネルのソースコードを入手する．このため，Linuxカーネルのソースコードが管理されている\verb|Git|のリポジトリをクローンする．本手順書では，\verb|/home/username|以下に\verb|git|ディレクトリを作成し，\verb|/home/username/git|以下でクローンする．以下のコマンドを実行する．
-    \begin{description}
-    \item[] \verb|$ cd /home/username|
-    \item[] \verb|$ mkdir git|
-    \item[] \verb|$ cd git|
-      \newpage
-    \item[] \verb|$ git clone git://git.kernel.org/pub/scm/linux/kernel\|
-    \item[] \verb|  /git/stable/linux-stable.git|
-    \end{description}
-  \item[] 実行により，\verb|/home/username/git|以下に\verb|linux-stable|ディレクトリを作成し，Linuxカーネルのソースコードは\verb|/home/username/git/linux-stable|以下に格納される．
+  \item[] \verb|$ sudo apt-get update|
+  \item[] \verb|$ sudo apt-get install git|
+  \item[] \verb|$ sudo apt-get install gcc|
+  \item[] \verb|$ sudo apt-get install bc |
+  \item[] \verb|$ sudo apt-get install make|
   \end{description}
-\item ブランチの作成と切替え
-  \begin{description}
-  \item[] ブランチの作成と切替えを行う．本手順書で使用するLinuxカーネルのバージョンは3.15であるため，HEADをバージョン3.15のコミットへ移動する．そこで，新規のブランチを作成した後，新規のブランチへカレントブランチを変更する．また，以降で示される操作は，すべて\verb|/home/username/git/linux-stable|以下で行う．以下のコマンドを実行する．
-    \begin{description}
-    \item[] \verb|$ git checkout -b 3.15 v3.15|
-    \end{description}
-  \item[] 実行により，v3.15というタグの示すコミットから新規のブランチ3.15を作成し，カレントブランチをブランチ3.15に切り替える．
-  \end{description}
-\end{enumerate}
+\item[] 実行により，\verb|git|，\verb|gcc|，\verb|bc|，および\verb|make|をインストールする．これらは，以降の操作で用いるコマンドの実行に必要となる．
+\end{description}
 
-\subsection{ソースファイルの作成}
-追加するシステムコールのソースファイルを作成する．本手順書で追加するシステムコールの概要を以下に示す．
-\begin{description}
-  \item[形式] :\verb|asmlinkage int sys_prt_to_rbuf(char *s)|
-  \item[引数] :\verb|char *s|: 任意の文字列の先頭を指すポインタ
-  \item[戻り値]
-  \item[]
-    \begin{description}
-    \item[成功] : カーネルのメッセージバッファに書き込んだ文字数
-    \item[失敗] : -1
-    \end{description}
-  \item[機能] :任意の文字列をカーネルのメッセージバッファに書き込む
-\end{description}
-本手順書で追加するシステムコールのソースコードを以下に示す．
 
-\begin{verbatim}
-1 #include <linux/kernel.h>
-2 #include <linux/syscalls.h>
-3
-4 asmlinkage int sys_prt_to_rbuf(char *s){
-5  int ret;
-6  ret = printk(KERN_INFO "%s\n",s);
-7  return ret;
-8 }
-\end{verbatim}
-上記のソースコードにおいて，6行目で呼び出している\verb|printk()|は，引数として与えられた文字列をカーネルのメッセージバッファに書き込む．\verb|printk()|の戻り値は，書込み成功時はカーネルのメッセージバッファに書き込んだ文字数であり，書込み失敗時は-1である．上記のソースコードを記したソースファイルを\verb|/home/username/git/linux-stable/kernel/prt_to_rbuf.c|として保存する．
-\subsection{システムコールのプロトタイプ宣言}
-システムコールのプロトタイプ宣言を行う．
-本手順書では，\verb|/home/username/git/linux-stable/|\\
-\verb|include/linux/syscalls.h|を以下のように編集する．
-\begin{verbatim}
- 866 asmlinkage long sys_kcmp(pid_t pid1, pid_t pid2, int type,
- 867                          unsigned long idx1, unsigned long idx2)
- 868 asmlinkage long sys_finit_module(int fd, const char __user *uargs, int flags);
-+869 asmlinkage int sys_prt_to_rbuf(char *s);
-\end{verbatim}
-編集により，\verb|sys_prt_to_rbuf()|をプロトタイプ宣言する．
-\subsection{システムコール番号の定義}
-システムコール番号を定義する．
-%システムコール関数と，システムコール番号との対応づけが書かれているファイルを編集する．
-本手順書では，\verb|/home/username/git/linux-stable/arch/|\\
-\verb|x86/syscalls/syscall_64.tbl|を以下のように編集し，$317$番を\verb|sys_prt_to_rbuf|のシステムコール番号として定義する．
-\begin{verbatim}
- 324 315    common    sched_getattr     sys_sched_getattr
- 325 316    common    renameat2	        sys_renameat2
-+326 317    common    sys_prt_to_rbuf   sys_prt_to_rbuf
-\end{verbatim}
-\subsection{Makefileの編集}
-Makefileを編集する．編集により，\verb|prt_to_rbuf.c|を，カーネルのコンパイルに含める．本手順書では，\verb|/home/username/git/linux-stable/kernel/Makefile|を以下のように編集する．
-\begin{verbatim}
-  5 obj-y     = fork.o exec_domain.o panic.o \
-  6             cpu.o exit.o itimer.o time.o softirq.o resource.o \
-  7             sysctl.o sysctl_binary.o capability.o ptrace.o timer.o user.o \
-  8             signal.o sys.o kmod.o workqueue.o pid.o task_work.o \
-  9             extable.o params.o posix-timers.o \
- 10             kthread.o sys_ni.o posix-cpu-timers.o \
- 11             hrtimer.o nsproxy.o \
- 12             notifier.o ksysfs.o cred.o reboot.o \
--13             async.o range.o groups.o smpboot.o
-+13             async.o range.o groups.o smpboot.o prt_to_rbuf.o
-\end{verbatim}
-%編集後，\verb|prt_to_rbuf.c|が，カーネルのコンパイルに含まれる．
-\subsection{カーネルの再構築}
-\subsubsection{.configファイルの作成}
-\verb|.config|ファイルを作成する．これは，カーネルの設定ファイルである．以下のコマンドを実行する．
-\begin{description}
-\item[] \verb|$ make defconfig|
-\end{description}
-実行により，\verb|x86_64_defconfig|ファイルに基づき，\verb|.config|ファイルを\verb|/home/username/|\\
-\verb|git/linux-stable|以下に生成する．
-\subsubsection{カーネルのコンパイル}
-システムコールを追加したカーネルをコンパイルする．以下のコマンドを実行する．
-\begin{description}
-\item[] \verb|$ make bzImage -j8|
-\end{description}
-上記コマンドは，実行により\verb|/home/username/git/linux-stable/arch/x86/boot|以下に\verb|bzImage|という圧縮カーネルイメージを生成し，\verb|/home/username/git/linux-stable|以下に\verb|System.map|というシンボルテーブルを生成する．圧縮カーネルイメージとはカーネルを格納して圧縮したファイルであり，シンボルテーブルとはシンボル名とアドレスの対応関係を示すものである．また，上記コマンドに設定されている\verb|-j|オプションは，同時に実行できるジョブ数を後ろの数字で指定している．
-\subsubsection{カーネルのインストール}\label{kerin}
-コンパイルしたカーネルのインストールを行う．以下のコマンドを実行する．
-\begin{description}
-\item[] \verb|$ sudo cp /home/username/git/linux-stable/arch/x86/boot/bzImage \|
-\item[] \verb| /boot/vmlinuz-3.15.0-linux|
-\item[] \verb|$ sudo cp /home/username/git/linux-stable/System.map \|
-\item[] \verb| /boot/System.map-3.15.0-linux|
-\end{description}
-実行により，カーネルをコンパイルした際に生成された，\verb|bzImage|と\verb|System.map|を，\verb|vmlinuz-3.15.0-linux|と\verb|System.map-3.15.0-linux|という名前で\verb|/boot|以下にコピーする．
-\subsubsection{カーネルモジュールのコンパイル}
-以下のコマンドを実行し，カーネルモジュールをコンパイルする．カーネルモジュールとは，カーネルの拡張的な機能をモジュール化したものである．
-\begin{description}
-\item[] \verb|$ make modules|
-\end{description}
-\subsubsection{カーネルモジュールのインストール}\label{kermin}
-以下のコマンドを実行し，コンパイルしたカーネルモジュールをインストールする．
-\begin{description}
-\item[] \verb|$ sudo make modules_install|
-\end{description}
-実行後，端末に実行結果が出力され，その最下行には以下のように出力される．
-\begin{description}
-\item[] \verb|DEPMOD 3.15.0|
-\end{description}
-この，\verb|DEPMOD|以後に続く\verb|3.15.0|という部分は，カーネルモジュールのインストールされたディレクトリ名であり，環境によって異なる．このディレクトリ名は次の操作で用いるため，控えておく．
-\subsubsection{初期RAMディスクの作成}
-初期RAMディスクを作成する．初期RAMディスクとは、実際のルートファイルシステムを使用できるようになる前にマウントされる一時的なルートファイルシステムのことである．本手順書では，以下のコマンドを実行する．このとき，\ref{kermin}項で控えておいたディレクトリ名を引数として与える．
-\begin{description}
-\item[] \verb|$ sudo update-initramfs -c -k 3.15.0|
-\end{description}
-\subsubsection{ブートローダの設定}\label{boot}
-ブートローダを設定し，カーネル選択画面から，システムコールを追加したカーネルを選択できるようにする．本手順書における環境では，ブートローダはGRUB2が用いられている．GRUB2の設定ファイルは\verb|/boot/grub/grub.cfg|であるが，設定を行う際，この設定ファイルは直接編集しない．\verb|/etc/grub.d|以下にあるスクリプトを基に，この設定ファイルが生成される．このため，このディレクトリにスクリプトを追加した後，コマンドを用いて設定ファイルを書き換える．手順を以下に述べる．
-\begin{enumerate}
-\item スクリプトの追加\\
-\verb|/etc/grub.d|以下にスクリプトを追加する．スクリプトのファイル名は，本手順書では\verb|/etc/grub.d|以下にある\verb|README|ファイルの説明に沿うように\verb|11_linux-3.15.0|とする．このスクリプトの内容を以下に示す．
 
-\begin{verbatim}
-1 #!/bin/sh -e
-2 echo "Adding my custom Linux to GRUB2"
-3 cat << EOF
-4 menuentry "My custom Linux" {
-5 set root=(hd0,1)
-6 linux /vmlinuz-3.15.0-linux ro root=/dev/sda2 quiet
-7 initrd /initrd.img-3.15.0
-8 }
-9 EOF
-\end{verbatim}
 上記スクリプトの内容に関する補足を以下に示す．
 \begin{enumerate}
 \item \verb|mementry <表示名>|
@@ -281,70 +112,6 @@ Makefileを編集する．編集により，\verb|prt_to_rbuf.c|を，カーネ�
   \end{description}
 \end{enumerate}
 
-\item 実行権限の付与\\
-以下のコマンドを実行し，\verb|/etc/grub.d/11_linux-3.15.0|に実行権限を付与する．\\
-  \verb|$ sudo chmod +x /etc/grub.d/11_linux-3.15.0|\\
-\item ブートローダ設定ファイルの更新\\
-  以下のコマンドを実行し，ブートローダの設定ファイルを更新する．\\
-  \verb|$ sudo update-grub|\\
-  実行により，起動時に，システムコールを追加したカーネルを選択可能になる．
-\end{enumerate}
-\subsubsection{再起動}
-再起動を行う．以下のコマンドを実行する．
-\begin{verbatim}
-$ sudo reboot
-\end{verbatim}
-  実行により，計算機を再起動する．再起動後，カーネル選択画面に\ref{boot}項のスクリプトで設定した\verb|<表示名>|がエントリとして追加されているため，それを選択する．本手順書の場合は，\verb|My custom Linux|を選択する．
-\section{システムコールの動作テスト}
-\subsection{概要}
-本章では，追加したシステムコールの動作テストについて述べる．動作テスト用のプログラムを用いて，追加したシステムコールを呼び出し，その振舞いが意図したものであるか否か確認する．以降では，動作テスト用プログラムの作成，動作テスト用プログラムのコンパイル，および動作テストの手順について，順に節を設け述べる．
-\subsection{動作テスト用プログラムの作成}
-\verb|sys_prt_to_rbuf()|の動作テストに用いるプログラムを作成する．本手順書における動作テスト用プログラムについて，ソースコードを以下に示し，説明する．
-\begin{verbatim}
- 1 #include<stdio.h>
- 2 #include<unistd.h>
- 3
- 4 int main(){
- 5  char buf[128];
- 6  long sys_num = 317;
- 7  int ret;
- 8  scanf("%[^\r\n]",buf);
- 9  ret = syscall(sys_num,buf);
-10  printf("ret:%d\n",ret);
-11  return 0;
-12 }
-\end{verbatim}
-上記の動作テスト用プログラムは，任意の文字列の入力を要求し，入力された文字列を\verb|syscall()|に第2引数として渡す．なお，\verb|syscall()|には317という値が第1引数として渡されているが，これは\verb|sys_prt_to_rbuf()|のシステムコール番号である．\verb|syscall()|によって\verb|sys_prt_to_rbuf()|を呼び出し，戻り値を端末に出力して終了する．本手順書では，このソースコードを記述したファイルを\verb|test_sys.c|として保存する．
-\subsection{動作テスト用プログラムのコンパイル}
-動作テスト用プログラムをコンパイルする．以下のコマンドを実行する．
-\begin{verbatim}
-$ gcc test_sys.c
-\end{verbatim}
-実行により，\verb|test_sys.c|をコンパイルし，\verb|a.out|という実行形式ファイルを生成する．
-\subsection{動作テストの手順}
-追加したシステムコールの動作テストの手順を以下に示し，説明する．
-\begin{enumerate}
-\item 動作テスト用プログラムの実行\\
-  動作テストプログラムを実行する．以下のコマンドを実行する．
-\begin{verbatim}
-$ ./a.out
-\end{verbatim}
-この後，実行された動作テスト用プログラムは，実行時に任意の文字列の入力を要求する．ここで，以下の文字列を入力する．
-\begin{verbatim}
-under the water
-\end{verbatim}
-入力後，追加したシステムコールが正常に動作している場合，カーネルのメッセージバッファに上記の文字列\verb|“under the water”|が書き込まれる．また，このとき端末には以下の以下のような出力がある．
-\begin{verbatim}
-ret:15
-\end{verbatim}
-上記の出力は，カーネルのメッセージバッファに15文字の文字列が書き込まれたことを意味している．
-\item 書き込みがなされたか否か確認\\
-  本手順書では，\verb|dmesg|コマンドを用いて，カーネルのメッセージバッファに正しく文字列が書き込まれたか否か確認する．\verb|dmesg|は，カーネルのメッセージバッファの内容を端末に出力するコマンドである．\verb|dmesg|コマンドを実行したときの出力結果の一部を以下に示す．
-\begin{verbatim}
-[12300.934433] under the water
-\end{verbatim}
-上記の出力結果において，左に表示されている数字は，計算機が起動してから何秒後にその行の内容がメッセージバッファに書き込まれたかを表している．上記の出力結果から，指定した文字列\verb|“under the water”|がカーネルのメッセージバッファに書き込まれていることがわかる．これにより，追加したシステムコールは，意図した動作をしていると言える．
-\end{enumerate}
 \section{おわりに}
 本手順書では，Linuxカーネルへ新たにシステムコールを追加する手順について述べた．さらに，追加したシステムコールが，意図した動作をしているかどうかを調べるテストの手順について述べた．
 
